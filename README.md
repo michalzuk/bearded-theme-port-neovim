@@ -8,11 +8,11 @@ This plugin ships all 64 Bearded variants generated from the upstream VSCode the
 
 ## Install
 
-Example with `lazy.nvim`:
+### lazy.nvim (GitHub)
 
 ```lua
 {
-  dir = '~/Projects/bearer.nvim',
+  'michalzuk/bearded-theme-port-neovim',
   name = 'bearded.nvim',
   config = function()
     require('bearded').setup({
@@ -26,11 +26,33 @@ Example with `lazy.nvim`:
 }
 ```
 
+### lazy.nvim (local dev)
+
+```lua
+{
+  dir = '~/Projects/bearer.nvim',
+  name = 'bearded.nvim',
+}
+```
+
+### vim-plug
+
+```vim
+Plug 'michalzuk/bearded-theme-port-neovim'
+```
+
 ## Usage
 
 - `:colorscheme bearded` loads the theme.
+- `:colorscheme bearded-arc` (or any variant key) loads a specific variant directly.
 - `:BeardedTheme <variant>` switches to any variant.
 - `:BeardedThemeList` prints all available variants.
+
+Direct variant colorscheme in config:
+
+```lua
+vim.cmd.colorscheme('bearded-arc')
+```
 
 You can also set a global before loading:
 
@@ -76,6 +98,14 @@ python3 scripts/update-palettes.py --themes-dir /path/to/bearded-theme/dist/vsco
 ```
 
 By default, the script reads from `/private/tmp/bearded-theme/dist/vscode/themes` and writes to `lua/bearded/palettes.lua`.
+
+## Tests
+
+Run core behavior tests (variant loading, command availability, key highlight mappings, transparent mode):
+
+```bash
+python3 -m unittest tests/test_core.py
+```
 
 ## Attribution
 

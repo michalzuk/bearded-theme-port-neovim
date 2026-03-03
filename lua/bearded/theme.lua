@@ -31,7 +31,41 @@ local function blend_alpha(hex, fallback)
   return fallback
 end
 
-local function normalize_color(hex)
+local function hex_to_rgb(hex)
+  return {
+    tonumber(hex:sub(2, 3), 16) or 0,
+    tonumber(hex:sub(4, 5), 16) or 0,
+    tonumber(hex:sub(6, 7), 16) or 0,
+  }
+end
+
+local function rgb_to_hex(rgb)
+  return string.format('#%02X%02X%02X', rgb[1], rgb[2], rgb[3])
+end
+
+local function blend_rgba_over(hex_rgba, bg_hex)
+  if type(hex_rgba) ~= 'string' or #hex_rgba ~= 9 then
+    return hex_rgba
+  end
+
+  if type(bg_hex) ~= 'string' or #bg_hex ~= 7 then
+    return '#' .. hex_rgba:sub(2, 7)
+  end
+
+  local fg_rgb = hex_to_rgb('#' .. hex_rgba:sub(2, 7))
+  local bg_rgb = hex_to_rgb(bg_hex)
+  local alpha = (tonumber(hex_rgba:sub(8, 9), 16) or 255) / 255
+
+  local out = {
+    math.floor((fg_rgb[1] * alpha) + (bg_rgb[1] * (1 - alpha)) + 0.5),
+    math.floor((fg_rgb[2] * alpha) + (bg_rgb[2] * (1 - alpha)) + 0.5),
+    math.floor((fg_rgb[3] * alpha) + (bg_rgb[3] * (1 - alpha)) + 0.5),
+  }
+
+  return rgb_to_hex(out)
+end
+
+local function normalize_color(hex, base_bg)
   if type(hex) ~= 'string' then
     return hex
   end
@@ -41,20 +75,20 @@ local function normalize_color(hex)
   end
 
   if #hex == 9 then
-    return '#' .. hex:sub(2, 7)
+    return blend_rgba_over(hex, base_bg)
   end
 
   return hex
 end
 
-local function normalize_palette(value)
+local function normalize_palette(value, base_bg)
   if type(value) ~= 'table' then
-    return normalize_color(value)
+    return normalize_color(value, base_bg)
   end
 
   local out = {}
   for k, v in pairs(value) do
-    out[k] = normalize_palette(v)
+    out[k] = normalize_palette(v, base_bg)
   end
 
   return out
@@ -130,8 +164,8 @@ local function groups(c)
     Visual = { bg = c.selection },
     VisualNOS = { bg = c.selection },
     QuickFixLine = { bg = c.selection, bold = true },
-    CursorLineFold = { fg = c.line_nr_active },
-    CursorLineSign = { fg = c.line_nr_active, bg = c.gutter },
+    CursorLineFold = { fg = c.line_nr_active, bg = c.line },
+    CursorLineSign = { fg = c.line_nr_active, bg = c.line },
 
     Comment = { fg = c.comment, italic = true },
     Constant = { fg = c.syntax.red },
@@ -339,7 +373,8 @@ end
 
 function M.load(variant)
   local key, palette, invalid = resolve_variant(variant)
-  palette = normalize_palette(palette)
+  local base_bg = type(palette.bg) == 'string' and #palette.bg == 7 and palette.bg or '#1E1E1E'
+  palette = normalize_palette(palette, base_bg)
 
   if invalid then
     vim.notify(

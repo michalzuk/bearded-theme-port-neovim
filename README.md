@@ -4,6 +4,8 @@ Port of [Bearded Theme](https://github.com/BeardedBear/bearded-theme) from VSCod
 
 Unofficial Neovim port for Bearded Theme users. This project is not affiliated with, endorsed by, or a replacement for the original VSCode theme; it exists to bring the same visual style to Neovim while crediting the original authors.
 
+Note: this project is vibe-coded. Even though it is "just" a theme port, please treat issues and PRs seriously and report anything that looks off.
+
 This plugin ships all 64 Bearded variants generated from the upstream VSCode theme JSON files and maps them to core Vim, Tree-sitter, and common plugin highlight groups.
 
 ## Install
@@ -112,3 +114,10 @@ python3 -m unittest tests/test_core.py
 - This project is a Neovim port of [Bearded Theme](https://github.com/BeardedBear/bearded-theme) by [BeardedBear](https://github.com/BeardedBear).
 - Upstream theme design and palette definitions come from the original project.
 - This repository is distributed under `GPL-3.0`; see `LICENSE`.
+
+## Open-source project docs
+
+- Contributing guide: `CONTRIBUTING.md`
+- Code of Conduct: `CODE_OF_CONDUCT.md`
+- Security policy: `SECURITY.md`
+- CI workflow: `.github/workflows/ci.yml`

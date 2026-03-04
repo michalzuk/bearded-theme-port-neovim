@@ -12,7 +12,10 @@ def nvim_eval(commands):
         base.extend(["-c", cmd])
     base.extend(["-c", "qa"])
     result = subprocess.run(base, capture_output=True, text=True, check=True)
-    return result.stderr.strip().splitlines()
+    merged = "\n".join([result.stdout, result.stderr]).strip()
+    if not merged:
+        return []
+    return merged.splitlines()
 
 
 def hex_hl(name):
